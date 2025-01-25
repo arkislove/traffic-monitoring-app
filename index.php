@@ -7,14 +7,39 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <?php
+        $servername = "localhost";
+        $username = "username";
+        $password = "password";
+        $dbname = "traffic";
+
+        // Create connection
+        $conn = new mysqli($servername, $username, $password, $dbname);
+
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+        echo "Connected successfully";
+        ?>
     <div class="grid-container">
         <div class="grid-item main-detection">
-            <h2>Main Detection Stream (1080P)</h2>
-            <!-- Add your video stream here -->
+            <h2>Main Detection Stream (1080P)</h2>    
+            <canvas id=canvas-main></canvas>
+            <video id=video-main controls loop>
+                <source src=video.webm type=video/webm>
+                <source src=video.ogg type=video/ogg>
+                <source src=video.mp4 type=video/mp4>
+            </video>
         </div>
         <div class="grid-item license-plate-detection">
             <h2>License Plate Detection Stream (4K)</h2>
-            <!-- Add your video stream here -->
+            <canvas id=canvas-license></canvas>
+            <video id=video-license  controls loop>
+                <source src=video.webm type=video/webm>
+                <source src=video.ogg type=video/ogg>
+                <source src=video.mp4 type=video/mp4>
+            </video>
         </div>
         <div class="grid-item license-plate-dashboard">
             <h2>License Plate Dashboard</h2>
@@ -37,8 +62,20 @@
             <form>
                 <label for="location">Location:</label>
                 <select id="location" name="location">
-                    <option value="entrance">Entrance and Exit of Robinsons Dumaguete</option>
+                    <?php
+                        $sql = "SELECT * FROM locations";
+                        $result = $conn->query($sql);
+
+                        if ($result->num_rows > 0) {
+                            while($row = $result->fetch_assoc()) {
+                                echo "<option value='{$row['id']}'> {$row['name']}</option>";
+                            }
+                        } else {
+                        echo "<option>N/A</option>";
+                        }            
+                    ?>
                 </select>
+
                 <br>
                 <label for="date">Date:</label>
                 <input type="date" id="date" name="date" value="2024-11-10">
