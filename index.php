@@ -89,11 +89,31 @@
                 <br>
                 <label for="vehicle-count">Vehicle Count:</label>
                 <ul>
-                    <li>SUV: 12</li>
-                    <li>Sedan: 20</li>
-                    <li>Motorcycle: 35</li>
-                    <li>PUV: 135</li>
-                    <li>Truck: 100</li>
+                    <?php
+                        $sql = "SELECT * FROM vehicles";
+                        $result = $conn->query($sql);
+
+                        $car = 0;
+                        $truck = 0;
+                        $motorcycle = 0;
+
+                        if ($result->num_rows > 0){
+                            while($row = $result->fetch_assoc()){
+                                match($row['vehicle_type']){
+                                    'car' => $car += 1,
+                                    'truck' => $truck += 1,
+                                    'motorcycle' => $motorcycle += 1,
+                                    default => null,
+                                };
+                            }
+                        } else {
+                            echo "<li>No vehicles found.</li>";
+                        }
+                        
+                        echo "<li>Car: {$car}";
+                        echo "<li>Truck: {$truck}";
+                        echo "<li>Motorcycle: {$motorcycle}";
+                    ?>
                 </ul>
                 <br>
                 <button type="button">Start Detection</button>
