@@ -1,4 +1,9 @@
 <!DOCTYPE html>
+
+<?php
+    include('config/constants.php');
+?>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -8,13 +13,8 @@
 </head>
 <body>
     <?php
-        $servername = "localhost";
-        $username = "username";
-        $password = "password";
-        $dbname = "traffic";
-
         // Create connection
-        $conn = new mysqli($servername, $username, $password, $dbname);
+        $conn = new mysqli(LOCALHOST, DB_USERNAME, DB_PASSWORD, DB_NAME);
 
         // Check connection
         if ($conn->connect_error) {
@@ -44,17 +44,30 @@
         <div class="grid-item license-plate-dashboard">
             <h2>License Plate Dashboard</h2>
             <ul>
-                <?php
-                $licensePlates = [
-                    ['plate' => '7WTJ930', 'time' => '03/11/2024 3:30 PM', 'status' => 'valid'],
-                    ['plate' => '6JVG393', 'time' => '03/11/2024 5:30 PM', 'status' => 'invalid'],
-                    ['plate' => '6JVG393', 'time' => '03/11/2024 6:30 PM', 'status' => 'valid']
-                ];
-                foreach ($licensePlates as $plate) {
-                    $statusClass = $plate['status'] === 'valid' ? 'green' : 'red';
-                    echo "<li class='$statusClass'>{$plate['plate']} detected on {$plate['time']}</li>";
+            <?php
+                $sql = "SELECT * FROM `motorcycle_riders`";
+                $result = $conn->query($sql);
+
+                if ($result->num_rows > 0) {
+
+                    while($row = $result->fetch_assoc()) {
+                        $riderId = $row['vehicles_id'];
+                        $sql2 = "SELECT * FROM `vehicles` WHERE `id` = $riderId";
+                        $result2 = $conn->query($sql2);
+
+                        if ($result2->num_rows > 0){
+                            while ($vehicleRow = $result2->fetch_assoc()) {
+                                $statusClass = $row['has_helmet'] ? 'green' : 'red';
+                                echo "<li class='$statusClass'> " . $riderId . " " . $vehicleRow['plate_number']. " </li>";
+                        }
+                        
+                        }
+                    }
+                } else {
+                    echo "No license plates found.";
                 }
-                ?>
+            ?>
+
             </ul>
         </div>
         <div class="grid-item admin-control-panel">
@@ -71,8 +84,8 @@
                                 echo "<option value='{$row['id']}'> {$row['name']}</option>";
                             }
                         } else {
-                        echo "<option>N/A</option>";
-                        }            
+                            echo "<option>N/A</option>";
+                        }
                     ?>
                 </select>
 
