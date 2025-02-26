@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-
 <?php
-include('config/constants.php');
+require('config/constants.php');
+require('functions.php');
+$conn = connectToDB();
 ?>
 
 <html lang="en">
@@ -10,20 +11,10 @@ include('config/constants.php');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Traffic Monitoring App</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" type="text/css" href="styles.css?v=1">
 </head>
 
 <body>
-    <?php
-    // Create connection
-    $conn = new mysqli(LOCALHOST, DB_USERNAME, DB_PASSWORD, DB_NAME);
-
-    // Check connection
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
-    echo "Connected successfully";
-    ?>
     <div class="grid-container">
         <div class="grid-item main-detection">
             <h2>Main Detection Stream (1080P)</h2>
@@ -45,36 +36,28 @@ include('config/constants.php');
         </div>
         <div class="grid-item license-plate-dashboard">
             <h2>License Plate Dashboard</h2>
-            <div class="license-plate-list">
-                <ul>
-                    <?php
-                    $sql = "SELECT * FROM `violators`";
-                    $result = $conn->query($sql);
+            <ul class="license-plate-list">
+                <?php
+                $sql = "SELECT * FROM `vehicles`";
+                $result = $conn->query($sql);
 
-                    if ($result->num_rows > 0) {
-
-                        while ($row = $result->fetch_assoc()) {
-                            $violatorId = $row['vehicles_id'];
-                            $sql2 = "SELECT * FROM `vehicles` WHERE `id` = $violatorId";
-                            $result2 = $conn->query($sql2);
-
-                            if ($result2->num_rows > 0) {
-                                while ($vehicleRow = $result2->fetch_assoc()) {
-                                    echo "<li class='red'> Violator #" . $violatorId . " [" . $vehicleRow['plate_number'] . "] </li>";
-                                }
-
-                            }
+                if ($result->num_rows > 0) {
+                    while ($vehicleRow = $result->fetch_assoc()) {
+                        if ($vehicleRow['plate_number'] == '') {
+                            echo "<li class='red'>" . $vehicleRow['vehicle_type'] . " - N/A</li>";
+                        } else {
+                            echo "<li class='green'>" . $vehicleRow['vehicle_type'] . " - " . $vehicleRow['plate_number'] . "</li>";
                         }
-                    } else {
-                        echo "No license plates found.";
                     }
-                    ?>
-                </ul>
-            </div>
+                } else {
+                    echo "No license plates found.";
+                }
+                ?>
+            </ul>
         </div>
         <div class="grid-item admin-control-panel">
             <h2>Admin Control Panel</h2>
-            <form>
+            <div>
                 <label for="location">Location:</label>
                 <select id="location" name="location">
                     <?php
@@ -98,26 +81,41 @@ include('config/constants.php');
                 <label for="time">Time:</label>
                 <input type="time" id="time" name="time" value="06:00">
                 <br>
-                <label for="helmet-detection">Helmet Detection:</label>
-                <p>Total Violators: 30</p>
-                <p>Total Non-Violators: 221</p>
                 <br>
-                <label for="vehicle-count">Vehicle Count:</label>
+                <h3><b>Helmet Detection</b></h3>
+                <?php
+                $sql = "SELECT COUNT(*) AS violatorsCount FROM violators";
+                $result = $conn->query($sql);
+
+                if ($result->num_rows > 0) {
+                    $row = $result->fetch_assoc();
+                    echo "<p>Total violators: " . $row['violatorsCount'] . "</p>";
+                } else {
+                    echo "No violators found.";
+                }
+                ?>
+                <p href="<?php echo SITEURL; ?>violators-list.php">
+                    <button>List of Violator(s)</button>
+                </p>
+                <br>
+                <h3><b>Vehicle Count</b></h3>
                 <ul>
                     <?php
                     $sql = "SELECT * FROM vehicles";
                     $result = $conn->query($sql);
 
                     $car = 0;
-                    $truck = 0;
                     $motorcycle = 0;
+                    $pedicab = 0;
+                    $truck = 0;
 
                     if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
                             match ($row['vehicle_type']) {
-                                'car' => $car += 1,
-                                'truck' => $truck += 1,
-                                'motorcycle' => $motorcycle += 1,
+                                'car' => $car++,
+                                'pedicab' => $pedicab++,
+                                'motorcycle' => $motorcycle++,
+                                'truck' => $truck++,
                                 default => null,
                             };
                         }
@@ -126,16 +124,13 @@ include('config/constants.php');
                     }
 
                     echo "<li>Car: {$car}";
-                    echo "<li>Truck: {$truck}";
+                    echo "<li>Pedicab: {$pedicab}";
                     echo "<li>Motorcycle: {$motorcycle}";
+                    echo "<li>Truck: {$truck}";
                     ?>
                 </ul>
                 <br>
-
-            </form>
-            <a href="<?php echo SITEURL; ?>print-violators.php">
-                <button>Print Violator(s)</button>
-            </a>
+            </div>
         </div>
     </div>
 </body>

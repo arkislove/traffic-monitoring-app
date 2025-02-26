@@ -11,9 +11,20 @@ td {
   border: 1px solid black;
 }
 
+h1,
+h2,
+h3,
+p {
+  text-align: center;
+}
+
+li {
+  text-align: left;
+}
+
 .grid-container {
   display: grid;
-  grid-template-columns: 3fr 1fr;
+  grid-template-columns: auto auto auto auto;
   gap: 10px;
   padding: 10px;
 }
@@ -22,26 +33,24 @@ td {
   background-color: #fff;
   border: 1px solid #ccc;
   padding: 20px;
-  text-align: center;
 }
 
 .main-detection {
-  grid-column: span 2;
-  grid-row: 1;
+  grid-column: 1 / span 3;
 }
 
-.license-plate-detection,
+.license-plate-detection {
+  grid-column: 1 / 2;
+}
+
 .license-plate-dashboard {
-  grid-column: span 1;
-}
-
-.license-plate-list {
-  text-align: justify;
+  grid-column: 2 / 4;
 }
 
 .admin-control-panel {
-  grid-column: 3 / 3;
+  grid-column: 4 / 5;
   grid-row: 1 / span 2;
+  align-content: space-between;
 }
 
 .green {
