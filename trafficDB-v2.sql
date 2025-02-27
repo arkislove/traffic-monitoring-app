@@ -21,7 +21,7 @@ CREATE TABLE `locations` (
 DROP TABLE IF EXISTS `vehicles`;
 CREATE TABLE `vehicles` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `vehicle_type` varchar(45) NOT NULL,
+  `type` varchar(45) NOT NULL,
   `model` varchar(45) NOT NULL,
   `color` varchar(45) NOT NULL,
   `image_path` varchar(45) NOT NULL,

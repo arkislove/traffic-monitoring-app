@@ -44,9 +44,9 @@ $conn = connectToDB();
                 if ($result->num_rows > 0) {
                     while ($vehicleRow = $result->fetch_assoc()) {
                         if ($vehicleRow['plate_number'] == '') {
-                            echo "<li class='red'>" . $vehicleRow['vehicle_type'] . " - N/A</li>";
+                            echo "<li class='red'>" . $vehicleRow['type'] . " - N/A</li>";
                         } else {
-                            echo "<li class='green'>" . $vehicleRow['vehicle_type'] . " - " . $vehicleRow['plate_number'] . "</li>";
+                            echo "<li class='green'>" . $vehicleRow['type'] . " - " . $vehicleRow['plate_number'] . "</li>";
                         }
                     }
                 } else {
@@ -58,6 +58,8 @@ $conn = connectToDB();
         <div class="grid-item admin-control-panel">
             <h2>Admin Control Panel</h2>
             <div>
+                -wip-
+                <br>
                 <label for="location">Location:</label>
                 <select id="location" name="location">
                     <?php
@@ -81,6 +83,7 @@ $conn = connectToDB();
                 <label for="time">Time:</label>
                 <input type="time" id="time" name="time" value="06:00">
                 <br>
+                -wip-
                 <br>
                 <h3><b>Helmet Detection</b></h3>
                 <?php
@@ -94,9 +97,9 @@ $conn = connectToDB();
                     echo "No violators found.";
                 }
                 ?>
-                <p href="<?php echo SITEURL; ?>violators-list.php">
+                <a href="<?php echo SITEURL; ?>violators-list.php">
                     <button>List of Violator(s)</button>
-                </p>
+                </a>
                 <br>
                 <h3><b>Vehicle Count</b></h3>
                 <ul>
@@ -111,7 +114,7 @@ $conn = connectToDB();
 
                     if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
-                            match ($row['vehicle_type']) {
+                            match ($row['type']) {
                                 'car' => $car++,
                                 'pedicab' => $pedicab++,
                                 'motorcycle' => $motorcycle++,

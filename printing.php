@@ -41,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     if ($result2->num_rows > 0) {
                         while ($locationRow = $result2->fetch_assoc()) {
                             $pdf->Cell(0, 10, 'Vehicle ID: ' . $violatorId, 0, 1);
-                            $pdf->Cell(0, 10, 'Vehicle Type: ' . $row['vehicle_type'], 0, 1);
+                            $pdf->Cell(0, 10, 'Vehicle Type: ' . $row['type'], 0, 1);
                             $pdf->Cell(0, 10, 'Plate Number: ' . $row['plate_number'], 0, 1);
                             $pdf->Cell(0, 10, 'Location: ' . $locationRow['name'] . ' (' . $locationRow['full_address'] . ')', 0, 1);
                             $pdf->Ln(10);
