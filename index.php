@@ -11,34 +11,59 @@ $conn = connectToDB();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Traffic Monitoring App</title>
-    <link rel="stylesheet" type="text/css" href="styles.css?v=1">
+    <link rel="stylesheet" type="text/css" href="styles.css?v=2">
+    <style>
+        #video-container {
+            text-align: center;
+            margin: 20px;
+        }
+
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+    <script>
+        function startStreaming() {
+            var canvas = document.getElementById('canvas');
+            var context = canvas.getContext('2d');
+            var video = document.createElement('video');
+            var hideButton = document.getElementById('hideButton');
+
+            navigator.mediaDevices.getDisplayMedia({ video: true }).then(function (stream) {
+                video.srcObject = stream;
+                video.play();
+                drawFrame();
+            });
+
+            function drawFrame() {
+                if (!video.hidden) {
+                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                }
+                requestAnimationFrame(drawFrame);
+            }
+
+            hideButton.addEventListener('click', function () {
+                video.hidden = !video.hidden;
+                hideButton.textContent = video.hidden ? 'Show Video' : 'Hide Video';
+            });
+        }
+    </script>
 </head>
 
-<body>
+<body onload="startStreaming()">
     <div class="grid-container">
-        <div class="grid-item main-detection">
-            <h2>Main Detection Stream (1080P)</h2>
-            <canvas id=canvas-main></canvas>
-            <video id=video-main controls loop>
-                <source src=video.webm type=video/webm>
-                <source src=video.ogg type=video/ogg>
-                <source src=video.mp4 type=video/mp4>
-            </video>
-        </div>
         <div class="grid-item license-plate-detection">
-            <h2>License Plate Detection Stream (4K)</h2>
-            <canvas id=canvas-license></canvas>
-            <video id=video-license controls loop>
-                <source src=video.webm type=video/webm>
-                <source src=video.ogg type=video/ogg>
-                <source src=video.mp4 type=video/mp4>
-            </video>
+            <h2>Live Video Feed</h2>
+            <div id="video-container">
+                <button id="hideButton">Hide Video</button>
+                <canvas id="canvas" width="640" height="480"></canvas>
+            </div>
         </div>
         <div class="grid-item license-plate-dashboard">
             <h2>License Plate Dashboard</h2>
             <ul class="license-plate-list">
                 <?php
-                $sql = "SELECT * FROM `vehicles`";
+                $sql = "SELECT * FROM `vehicles` LIMIT 50";
                 $result = $conn->query($sql);
 
                 if ($result->num_rows > 0) {
@@ -54,6 +79,9 @@ $conn = connectToDB();
                 }
                 ?>
             </ul>
+            <a href="plates-list.php">
+                <button>List of Recorded Plate Number(s)</button>
+            </a>
         </div>
         <div class="grid-item admin-control-panel">
             <h2>Admin Control Panel</h2>
@@ -97,7 +125,7 @@ $conn = connectToDB();
                     echo "No violators found.";
                 }
                 ?>
-                <a href="<?php echo SITEURL; ?>violators-list.php">
+                <a href="violators-list.php">
                     <button>List of Violator(s)</button>
                 </a>
                 <br>
@@ -126,10 +154,14 @@ $conn = connectToDB();
                         echo "<li>No vehicles found.</li>";
                     }
 
-                    echo "<li>Car: {$car}";
-                    echo "<li>Pedicab: {$pedicab}";
-                    echo "<li>Motorcycle: {$motorcycle}";
-                    echo "<li>Truck: {$truck}";
+                    if ($car > 0)
+                        echo "<li>Car: {$car}";
+                    if ($pedicab > 0)
+                        echo "<li>Pedicab: {$pedicab}";
+                    if ($motorcycle > 0)
+                        echo "<li>Motorcycle: {$motorcycle}";
+                    if ($truck > 0)
+                        echo "<li>Truck: {$truck}";
                     ?>
                 </ul>
                 <br>

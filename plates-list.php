@@ -48,7 +48,7 @@ $conn = connectToDB();
 
             $data = array();
 
-            $sql = "SELECT * FROM `violators`";
+            $sql = "SELECT * FROM `vehicles`";
             $result = $conn->query($sql);
 
             if ($result->num_rows > 0) {
@@ -62,37 +62,31 @@ $conn = connectToDB();
                 echo "<th>Time</th>";
                 echo "</tr>";
 
-                while ($row = $result->fetch_assoc()) {
-                    $violatorId = $row['vehicles_id'];
-                    $sql2 = "SELECT * FROM `vehicles` WHERE `id` = $violatorId";
-                    $result2 = $conn->query($sql2);
+                if ($result->num_rows > 0) {
+                    while ($vehicleRow = $result->fetch_assoc()) {
+                        $locationId = $vehicleRow['locations_id'];
+                        $sql2 = "SELECT * FROM `locations` WHERE `id` = $locationId";
+                        $result2 = $conn->query($sql2);
 
-                    if ($result2->num_rows > 0) {
-                        while ($vehicleRow = $result2->fetch_assoc()) {
-                            $locationId = $vehicleRow['locations_id'];
-                            $sql3 = "SELECT * FROM `locations` WHERE `id` = $locationId";
-                            $result3 = $conn->query($sql3);
+                        if ($result2->num_rows > 0) {
+                            while ($locationRow = $result2->fetch_assoc()) {
+                                echo "<tr>";
+                                echo "<td><input type='checkbox' name='violators[]' value='" . $vehicleRow['id'] . "'></td>";
+                                echo "<td title='Vehicle ID: " . $vehicleRow['id'] . "'>" . $vehicleRow['id'] . "</td>";
+                                echo "<td title='Model: " . $vehicleRow['model'] . "'>" . $vehicleRow['type'] . "</td>";
+                                echo "<td title='Plate Number: " . $vehicleRow['plate_number'] . "'>" . $vehicleRow['plate_number'] . "</td>";
+                                echo "<td title='Full Address: " . $locationRow['full_address'] . "'>" . $locationRow['name'] . "</td>";
 
-                            if ($result3->num_rows > 0) {
-                                while ($locationRow = $result3->fetch_assoc()) {
-                                    echo "<tr>";
-                                    echo "<td><input type='checkbox' name='violators[]' value='" . $violatorId . "'></td>";
-                                    echo "<td title='Vehicle ID: " . $violatorId . "'>" . $violatorId . "</td>";
-                                    echo "<td title='Model: " . $vehicleRow['model'] . "'>" . $vehicleRow['type'] . "</td>";
-                                    echo "<td title='Plate Number: " . $vehicleRow['plate_number'] . "'>" . $vehicleRow['plate_number'] . "</td>";
-                                    echo "<td title='Full Address: " . $locationRow['full_address'] . "'>" . $locationRow['name'] . "</td>";
+                                $created_at = calculateAndPrintTimeDifference($vehicleRow['created_at']);
 
-                                    $created_at = calculateAndPrintTimeDifference($vehicleRow['created_at']);
-
-                                    echo "<td title='Created at: " . $vehicleRow['created_at'] . "'>" . $created_at . "</td>";
-                                    echo "</tr>";
-                                }
+                                echo "<td title='Created at: " . $vehicleRow['created_at'] . "'>" . $created_at . "</td>";
+                                echo "</tr>";
                             }
                         }
                     }
                 }
+
                 echo "</table>";
-                echo "<br><button type='submit'>Print Selected Violators</button>";
             } else {
                 echo "No license plates found.";
             }
