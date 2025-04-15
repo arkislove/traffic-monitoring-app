@@ -84,8 +84,8 @@ $conn = connectToDB();
                         }
                     }
                 }
-
                 echo "</table>";
+                echo "<br><button type='submit'>Print Selected Violators</button>";
             } else {
                 echo "No license plates found.";
             }

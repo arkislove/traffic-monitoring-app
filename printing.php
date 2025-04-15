@@ -33,11 +33,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         foreach ($violators as $violatorId) {
             $sql = "SELECT * FROM `vehicles` WHERE `id` = $violatorId";
             $result = $conn->query($sql);
+
             if ($result->num_rows > 0) {
                 while ($row = $result->fetch_assoc()) {
+                    // If your image path comes from the database, for example:
+                    $imagePath = $row['image_path'];
+                    // Otherwise, set a static path:
+
+                    // Insert the image at x=10, y=current position, with a width of 30.
+                    // The height is automatically calculated to maintain the aspect ratio,
+                    // but you can specify it as a 4th parameter if needed.
+                    $pdf->Image($imagePath, 10, $pdf->GetY(), 30);
+                    
+                    // Adjust vertical spacing based on the image height (here, 30 plus some margin)
+                    $pdf->Ln(35);
+
                     $locationId = $row['locations_id'];
                     $sql2 = "SELECT * FROM `locations` WHERE `id` = $locationId";
                     $result2 = $conn->query($sql2);
+
                     if ($result2->num_rows > 0) {
                         while ($locationRow = $result2->fetch_assoc()) {
                             $pdf->Cell(0, 10, 'Vehicle ID: ' . $violatorId, 0, 1);
