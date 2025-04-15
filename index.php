@@ -62,22 +62,7 @@ $conn = connectToDB();
         <div class="grid-item license-plate-dashboard">
             <h2>License Plate Dashboard</h2>
             <ul class="license-plate-list">
-                <?php
-                $sql = "SELECT * FROM `vehicles` LIMIT 50";
-                $result = $conn->query($sql);
-
-                if ($result->num_rows > 0) {
-                    while ($vehicleRow = $result->fetch_assoc()) {
-                        if ($vehicleRow['plate_number'] == '') {
-                            echo "<li class='red'>" . $vehicleRow['type'] . " - N/A</li>";
-                        } else {
-                            echo "<li class='green'>" . $vehicleRow['type'] . " - " . $vehicleRow['plate_number'] . "</li>";
-                        }
-                    }
-                } else {
-                    echo "No license plates found.";
-                }
-                ?>
+                <?php getLicensePlates($conn)?>
             </ul>
             <a href="plates-list.php">
                 <button>List of Recorded Plate Number(s)</button>
@@ -115,15 +100,7 @@ $conn = connectToDB();
                 <br>
                 <h3><b>Helmet Detection</b></h3>
                 <?php
-                $sql = "SELECT COUNT(*) AS violatorsCount FROM violators";
-                $result = $conn->query($sql);
-
-                if ($result->num_rows > 0) {
-                    $row = $result->fetch_assoc();
-                    echo "<p>Total violators: " . $row['violatorsCount'] . "</p>";
-                } else {
-                    echo "No violators found.";
-                }
+                    getViolators($conn)
                 ?>
                 <a href="violators-list.php">
                     <button>List of Violator(s)</button>

@@ -30,4 +30,34 @@ function calculateAndPrintTimeDifference($created_at){
     }
     return $created_at;
 }
+
+function getLicensePlates($conn) {
+    $sql = "SELECT * FROM `vehicles` LIMIT 50";
+                $result = $conn->query($sql);
+
+                if ($result->num_rows > 0) {
+                    while ($vehicleRow = $result->fetch_assoc()) {
+                        if ($vehicleRow['plate_number'] == '') {
+                            echo "<li class='red'>" . $vehicleRow['type'] . " - N/A</li>";
+                        } else {
+                            echo "<li class='green'>" . $vehicleRow['type'] . " - " . $vehicleRow['plate_number'] . "</li>";
+                        }
+                    }
+                } else {
+                    echo "No license plates found.";
+                }
+}
+
+function getViolators($conn){
+    $sql = "SELECT COUNT(*) AS violatorsCount FROM violators";
+                $result = $conn->query($sql);
+
+                if ($result->num_rows > 0) {
+                    $row = $result->fetch_assoc();
+                    echo "<p>Total violators: " . $row['violatorsCount'] . "</p>";
+                } else {
+                    echo "No violators found.";
+                }
+}
 ?>
+
