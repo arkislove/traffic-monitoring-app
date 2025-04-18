@@ -56,3 +56,12 @@ li {
 .red {
   color: red;
 }
+
+#video-container {
+  text-align: center;
+  margin: 20px;
+}
+
+canvas {
+  border: 1px solid black;
+}

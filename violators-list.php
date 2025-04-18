@@ -78,6 +78,7 @@ $conn = connectToDB();
                                     echo "<tr>";
                                     echo "<td><input type='checkbox' name='violators[]' value='" . $violatorId . "'></td>";
                                     echo "<td title='Vehicle ID: " . $violatorId . "'>" . $violatorId . "</td>";
+                                    echo "<td title='Vehicle ID: " . $vehicleRow['type'] . "'>" . $vehicleRow['type'] . "</td>";
                                     echo "<td title='Plate Number: " . $vehicleRow['plate_number'] . "'>" . $vehicleRow['plate_number'] . "</td>";
                                     echo "<td title='Full Address: " . $locationRow['full_address'] . "'>" . $locationRow['name'] . "</td>";
 

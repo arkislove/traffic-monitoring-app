@@ -31,24 +31,24 @@ function calculateAndPrintTimeDifference($created_at){
     return $created_at;
 }
 
-function getLicensePlates($conn) {
-    $sql = "SELECT * FROM `vehicles` LIMIT 50";
-                $result = $conn->query($sql);
+function getLicensePlates($conn, $location_id) {
+    $sql = "SELECT * FROM `vehicles` WHERE `locations_id` = $location_id LIMIT 50";
+    $result = $conn->query($sql);
 
-                if ($result->num_rows > 0) {
-                    while ($vehicleRow = $result->fetch_assoc()) {
-                        if ($vehicleRow['plate_number'] == '') {
-                            echo "<li class='red'>" . $vehicleRow['type'] . " - N/A</li>";
-                        } else {
-                            echo "<li class='green'>" . $vehicleRow['type'] . " - " . $vehicleRow['plate_number'] . "</li>";
-                        }
-                    }
-                } else {
-                    echo "No license plates found.";
-                }
+    if ($result->num_rows > 0) {
+        while ($vehicleRow = $result->fetch_assoc()) {
+            if (empty($vehicleRow['plate_number'])) {
+                echo "<li class='red'>" . $vehicleRow['type'] . " - N/A</li>";
+            } else {
+                echo "<li class='green'>" . $vehicleRow['type'] . " - " . $vehicleRow['plate_number'] . "</li>";
+            }
+        }
+    } else {
+        echo "<li>No license plates found for the selected location.</li>";
+    }
 }
 
-function getViolators($conn){
+function getViolatorsCount($conn){
     $sql = "SELECT COUNT(*) AS violatorsCount FROM violators";
                 $result = $conn->query($sql);
 
